@@ -1,0 +1,13 @@
+Source: mrain
+Section: x11
+Priority: optional
+Maintainer: Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>
+Build-Depends: debhelper (>= 5), libx11-dev, libgl1-mesa-dev (>= 7.0)
+Standards-Version: 3.8.0
+
+Package: mrain
+Architecture: any
+Depends: ${shlibs:Depends}, libx11-6, libgl1-mesa-glx (>= 7.0)
+Description: Matrix Rain - Screensaver for X Server (GNOME)
+ This screensaver base on V4L2 and OpenGL. It captures video from 
+ your web-camera and displays it like "matrix" in real-time.
