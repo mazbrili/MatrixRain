@@ -1,0 +1,6 @@
+mrain (0.0.20080831-1) unstable; urgency=low
+
+  * Initial release
+  * Fix bugs in build-scripts. Closes: #1.
+
+ -- Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>  Sun, 31 Aug 2008 13:05:10 +0300
