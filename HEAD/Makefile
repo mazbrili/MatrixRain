@@ -1,4 +1,4 @@
-.PHONY: default clean check
+.PHONY: all clean $(PROGRAM)
 
 PROGRAM	:= mrain
 SRC	:= $(wildcard *.cpp) $(wildcard *.c)
@@ -19,9 +19,10 @@ DESTDIR 	:=
 INSTALL_BIN_DIR	:= /usr/lib/xscreensaver
 INSTALL_DTP_DIR	:= /usr/share/applications/screensavers
 
-include $(wildcard *.d)
 
-default: $(PROGRAM)
+all: $(PROGRAM)
+
+include $(wildcard *.d)
 
 build-deb: build-tar
 	mkdir $(PACK_NAME)
@@ -44,10 +45,8 @@ clean:
 $(PROGRAM): $(OBJ)
 	g++ $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
-%.o: %.cpp
+$(OBJ): %.o: %.cpp
 	g++ $(CFLAGS) $(INCLUDES) $(DEFINES) -MD -c $< -o $@
-
-#\	"X-Ubuntu-Gettext-Domain=xscreensaver"
 
 install: $(PROGRAM)
 	mkdir -p $(DESTDIR)/$(INSTALL_BIN_DIR)

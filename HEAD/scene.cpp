@@ -199,7 +199,7 @@ Matrix::Strip::~Strip()
 
 void Matrix::Strip::draw()
 {	
-	GLfloat yi = y;
+	GLfloat yi = y; 
 	glBegin(GL_TRIANGLE_STRIP);
 	for(unsigned int i=0; i<spinner_end; i++)
 	{
