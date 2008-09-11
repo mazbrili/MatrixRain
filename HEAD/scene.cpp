@@ -61,16 +61,16 @@ Matrix::Matrix(unsigned int n, int widht, int height):video(NULL), program(NULL)
 	const GLchar* vertex_shader = 
 	"uniform vec4 res;"
 	"uniform sampler2D video;"
-	"varying vec2 video_st;"
 	"void main(void)"
 	"{"
 	" vec2 st = vec2( (res[0] - gl_Vertex.x)/res[2], -gl_Vertex.y/res[3] );"
 	" vec4 color = texture2D(video, st);"
-	" gl_Vertex.z = color.r*1.4;"
+	" vec4 vertex = gl_Vertex;"
+	" vertex.z = color.r*1.4;"
 	" gl_FrontColor = gl_Color;"
 	" gl_TexCoord[0] = gl_MultiTexCoord0;"
-	" video_st = st;"
-	" gl_Position = ftransform();"
+	" gl_TexCoord[1].st = st;"
+	" gl_Position = gl_ModelViewProjectionMatrix * vertex;"
 	"}";
 
 	vshader.set_source(vertex_shader);
@@ -82,13 +82,12 @@ Matrix::Matrix(unsigned int n, int widht, int height):video(NULL), program(NULL)
 	const GLchar* fragment_shader = 
 	"uniform sampler2D letter;"
 	"uniform sampler2D video;"
-	"varying vec2 video_st;"
 	"void main(void)"
 	"{"
 	" vec4 texture = texture2D(letter, gl_TexCoord[0].st);"
 	" if(texture.a == 1.0) discard;"
-	" vec4 vid = texture2D(video, video_st);"		
-	" gl_FragColor = texture.rgba * vid.r * (1.0 - gl_Color.a);"
+	" vec4 vid = texture2D(video, gl_TexCoord[1].st);"
+	" gl_FragColor = texture * vid.r * (1.0 - gl_Color.a);"
 //	" gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);"
 	"}";
 
@@ -125,7 +124,11 @@ void Matrix::set_video(const VideoBuffer* buffer)
 void Matrix::draw()
 {	
 	glLoadIdentity();
+//	glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
 	glTranslatef(-32.0,24.0,-25.0f);
+
+//	glTranslatef(0,0,-10.0f);
+//	glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
 
 	if( video )
 	{
@@ -144,10 +147,13 @@ void Matrix::draw()
 	glActiveTexture(GL_TEXTURE0);		
 	glEnable(GL_TEXTURE_2D);
 	letter->bind();
+
 	for(unsigned int i=0; i<num; i++)
 	{			
 		strips[i]->draw();
 	}
+
+//	strips[0]->draw();
 }
 
 void Matrix::tick(unsigned long usec)
@@ -223,6 +229,46 @@ void Matrix::Strip::draw()
 	}
 
 	glEnd();
+
+/*	GLfloat yi = y;
+	glBegin(GL_TRIANGLE_STRIP);
+
+
+	float xi = 0.0f;
+	float zi = 0.0f;
+
+	float inc_phi = 1.2f;
+	float inc_p   = 0.25f;
+
+	size = 1;
+
+
+	float phi = 0.0f;
+	float p   = inc_p;
+	float k = 0.2;
+	for(unsigned int i=0; i<spinner_end; i++)
+	{
+		inc_phi *= 0.95f;
+		phi += inc_phi;
+
+		float x_next = xi + size * sinf(phi);
+		float z_next = zi + size * cosf(phi);
+		GLfloat a = 1.0 - cosf(float((int(wave_y - i)%80))*(3.1415926f/180.0f));
+
+		GLfloat s = 0;//(1.0f/32.0f) * glyphs[i];
+		
+		glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
+		glTexCoord2f(s, 0.0f); 			glVertex3f(xi,yi,zi);	
+		glTexCoord2f(s, 0.0f); 			glVertex3f(xi,yi,zi);	
+		glTexCoord2f(s, 0.0f); 			glVertex3f(xi,yi,zi);	
+		glTexCoord2f(s+1.0f/32.0f, 0.0f);	glVertex3f(x_next,yi,z_next);
+		glTexCoord2f(s, 1.0f); 			glVertex3f(xi,yi+size,zi);
+		glTexCoord2f(s+1.0f/32.0f, 1.0f);	glVertex3f(x_next,yi+size,z_next);
+
+		xi = x_next;
+		zi = z_next;
+	}
+*/
 }
 
 void Matrix::Strip::tick(unsigned long usec, bool update)
@@ -230,6 +276,7 @@ void Matrix::Strip::tick(unsigned long usec, bool update)
 	double delta  = double(usec)/1000000.0;
 	wave_y += wave_speed * delta;
 
+//	spinner_end = n_glyphs;
 	if(spinner_end < n_glyphs)
 	{
 		spinner_end += spinner_speed * delta;

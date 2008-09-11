@@ -71,35 +71,13 @@ GLView::GLView(AppWindow* win)
 		}
 	}
 
-	/* jwz: the doc for glDrawBuffer says "The initial value is GL_FRONT
-	for single-buffered contexts, and GL_BACK for double-buffered
-	contexts."  However, I find that this is not always the case,
-	at least with Mesa 3.4.2 -- sometimes the default seems to be
-	GL_FRONT even when glGet(GL_DOUBLEBUFFER) is true.  So, let's
-	make sure.
-
-	Oh, hmm -- maybe this only happens when we are re-using the
-	xscreensaver window, and the previous GL hack happened to die with
-	the other buffer selected?  I'm not sure.  Anyway, this fixes it.
-	*/
-/*	{
-	GLboolean d = False;
-	glGetBooleanv (GL_DOUBLEBUFFER, &d);
-	if (d)
-		glDrawBuffer (GL_BACK);
-	else
-		glDrawBuffer (GL_FRONT);
-	}*/
-
 	glShadeModel(GL_SMOOTH);
 
-//	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 //	glDisable(GL_CULL_FACE);
-//	glEnable(GL_TEXTURE_2D);
 	glBlendFunc (GL_ONE_MINUS_SRC_ALPHA,  GL_SRC_ALPHA);
-//	glEnable(GL_BLEND);
 
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glXSwapBuffers(dpy, window);
@@ -124,7 +102,6 @@ unsigned int GLView::draw()
 		glColor3f(0.0f, 0.0, 1.0f); glVertex3f(10.0, 0.0, 0.0);
 	glEnd();
 
-	glFlush();
 	glXSwapBuffers(dpy, window);
 	return 0;
 }
@@ -157,7 +134,6 @@ void GLView::reshape(unsigned int width, unsigned int height)
 
 void GLView::swap_buffers()
 {
-	glFlush();
 	glXSwapBuffers(dpy, window);	
 }
 

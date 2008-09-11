@@ -41,15 +41,13 @@ build-tar: clean
 clean:
 	rm -rf $(PROGRAM)* *.o *.d *.gz *~
 
-check:
-	dpkg -s libx11-dev
-	dpkg -s libgl1-mesa-dev
-
-$(PROGRAM): check $(OBJ)
-	g++ $(CFLAGS) $(LIBS) -o $@ $(OBJ)
+$(PROGRAM): $(OBJ)
+	g++ $(CFLAGS) -o $@ $(OBJ) $(LIBS)
 
 %.o: %.cpp
 	g++ $(CFLAGS) $(INCLUDES) $(DEFINES) -MD -c $< -o $@
+
+#\	"X-Ubuntu-Gettext-Domain=xscreensaver"
 
 install: $(PROGRAM)
 	mkdir -p $(DESTDIR)/$(INSTALL_BIN_DIR)
@@ -67,8 +65,7 @@ install: $(PROGRAM)
 	"Terminal=false\n"\
 	"Type=Application\n"\
 	"Categories=Screensaver\n"\
-	"OnlyShowIn=GNOME\n"\
-	"X-Ubuntu-Gettext-Domain=xscreensaver" >$(DESTDIR)/$(INSTALL_DTP_DIR)/$(PROGRAM).desktop
+	"OnlyShowIn=GNOME;KDE;\n" >$(DESTDIR)/$(INSTALL_DTP_DIR)/$(PROGRAM).desktop
 
 uninstall:
 	rm $(DESTDIR)/$(INSTALL_BIN_DIR)/$(PROGRAM)

@@ -10,11 +10,7 @@
 #include <cstdarg>
 #include "stuff.h"
 //--------------------------------------------------------------
-/* The following 'random' numbers are taken from CRC, 18th Edition, page 622.
-   Each array element was taken from the corresponding line in the table,
-   except that a[0] was from line 100. 8s and 9s in the table were simply
-   skipped. The high order digit was taken mod 4.
- */
+// The following 'random' numbers are taken from CRC, 18th Edition, page 622.
 
 Random grnd;
 

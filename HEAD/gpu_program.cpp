@@ -7,7 +7,7 @@
 
 //--------------------------------------------------------------
 #include <cstdio>
-
+#include <cstring>
 #include "gpu_program.h"
 //--------------------------------------------------------------
 bool Shader::compile()
@@ -23,12 +23,11 @@ void Shader::log()
 	GLint size = 0;
 	glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &size);
 	GLchar* info = new GLchar[size];
+	memset(info, '\0', sizeof(GLchar) * size);
 	glGetShaderInfoLog(handle, size, NULL, info );
-	fprintf(stderr, "Shader log:\n%s\n\n", info);
+	fprintf(stderr, "Shader log:\n%s\n", info);
 	delete[] info;
 }
-
-
 
 bool GPU_Program::link()
 {
@@ -43,8 +42,9 @@ void GPU_Program::log()
 	GLint size = 0;
 	glGetProgramiv(handle, GL_INFO_LOG_LENGTH, &size);
 	GLchar* info = new GLchar[size];
+	memset(info, '\0', sizeof(GLchar) * size);		
 	glGetProgramInfoLog(handle, size, NULL, info );
-	fprintf(stderr, "Program log:\n%s\n\n", info);
+	fprintf(stderr, "Program log:\n%s\n", info);
 	delete[] info;
 }
 
