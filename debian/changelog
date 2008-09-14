@@ -1,6 +1,8 @@
-mrain (0.0.20080908-1) unstable; urgency=low
+mrain (0.0.20080915-1) unstable; urgency=low
 
+  * Add new console options --help and --window-id. GL-logging has been enlarged
+  * Fix bugs in Makefile, refactored vertex/fragment shaders and some minor fixes
   * Initial release
   * Fix bugs in build-scripts. Closes: #1.
 
- -- Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>  Mon, 08 Sep 2008 13:05:10 +0300
+ -- Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>  Mon, 15 Sep 2008 13:05:10 +0300
