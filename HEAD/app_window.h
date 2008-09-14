@@ -14,7 +14,7 @@
 class AppWindow
 {
 public:
-	AppWindow(bool grab_root);
+	AppWindow();
 	~AppWindow();
 
 	bool process_events(class GLView* view);

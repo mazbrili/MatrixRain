@@ -6,6 +6,8 @@
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
+#include <cstring>
+
 #include "video_buffer.h"
 //--------------------------------------------------------------
 VideoBuffer::VideoFrame::VideoFrame(char* data, unsigned int width, unsigned int height, GLuint tex_id):TextureArray::Texture(tex_id, GL_TEXTURE_2D)

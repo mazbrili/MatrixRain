@@ -64,7 +64,8 @@ install: $(PROGRAM)
 	"Terminal=false\n"\
 	"Type=Application\n"\
 	"Categories=Screensaver\n"\
-	"OnlyShowIn=GNOME;KDE;\n" >$(DESTDIR)/$(INSTALL_DTP_DIR)/$(PROGRAM).desktop
+	"OnlyShowIn=GNOME\n"\
+	"X-Ubuntu-Gettext-Domain=xscreensaver" >$(DESTDIR)/$(INSTALL_DTP_DIR)/$(PROGRAM).desktop
 
 uninstall:
 	rm $(DESTDIR)/$(INSTALL_BIN_DIR)/$(PROGRAM)

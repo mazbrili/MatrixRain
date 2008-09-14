@@ -25,10 +25,12 @@ public:
 
 		const char*	name;
 		const char*	value;
+		const char*	comment;
 	};
 
 	static bool load(int argc, char **argv, Option* defaults);
 	static const Option& get(const char* name);
+	static bool usage();
 
 private:
 	static Option* options;

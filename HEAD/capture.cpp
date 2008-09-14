@@ -10,8 +10,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <cstring>
 
 #include <unistd.h>
+#include <memory.h>
 #include <fcntl.h>              // low-level i/o
 #include <sys/ioctl.h>
 #include <sys/mman.h>

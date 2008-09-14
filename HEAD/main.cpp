@@ -12,19 +12,22 @@
 #include "application.h"
 //--------------------------------------------------------------
 Options::Option default_opts[]={
-	{ "--root",  	"false"		},
-	{ "--width",	"600"		},
-  	{ "--height",	"480"		},
-	{ "--device",	"/dev/video0"	},
-	{ "--convert",	"false"		},
-	{ NULL, 	NULL		},
+	{ "--help",	"false",	"show this message"				},
+	{ "--root",  	"false",	"setup a root window for fullscreen mode"	},
+	{ "--window-id","0",		"specific X window ID"				},
+	{ "--width",	"600",		"setup a width of screensaver window"		},
+  	{ "--height",	"480",		"setup a height of screensaver window"		},
+	{ "--device",	"/dev/video0",	"setup a device for capturing video"		},
+	{ "--convert",	"false",	"my little bitmap converter. usage: mrain --convert <input.bmp> <output.filename>" },
+	{ NULL, 	NULL,		NULL	},
 };
-
-//FILE* log22 = NULL;
 
 int main(int argc, char **argv)
 {
 	Options::load(argc, argv, default_opts);
+
+
+	if( Options::get("--help") ) return Options::usage();
 
 	// A little converter bmp -> *.h	
 	if( Options::get("--convert") )

@@ -48,15 +48,19 @@ void GPU_Program::log()
 	delete[] info;
 }
 
-bool GPU_Program::use()
+bool GPU_Program::validate()
 {
-	glUseProgram(handle);
-	if( GL_INVALID_OPERATION == glGetError() )
-		return false;
 	glValidateProgram(handle);
 	GLint success = GL_FALSE;
 	glGetProgramiv(handle, GL_VALIDATE_STATUS, &success);
+	log();
 	return success == GL_TRUE;
+}
+
+bool GPU_Program::use()
+{
+	glUseProgram(handle);
+	return GL_NO_ERROR == glGetError();
 }
 
 void GPU_Program::set_sampler(const char* name, int value)

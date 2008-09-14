@@ -64,6 +64,7 @@ public:
 
 	bool link();
 	void log();
+	bool validate();
 	bool use();
 
 	void set_sampler(const char* name, int value);

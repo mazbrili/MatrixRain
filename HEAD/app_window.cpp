@@ -17,7 +17,7 @@
 
 //extern FILE* log22;
 //--------------------------------------------------------------
-AppWindow::AppWindow(bool grab_root)
+AppWindow::AppWindow()
 {
 	XSetErrorHandler(AppWindow::x_error_handler);
 
@@ -33,9 +33,23 @@ AppWindow::AppWindow(bool grab_root)
 
 	XA_WM_PROTOCOLS		= XInternAtom (display, "WM_PROTOCOLS", False);
 	XA_WM_DELETE_WINDOW	= XInternAtom (display, "WM_DELETE_WINDOW", False);
-	if(grab_root)
+
+	int id = Options::get("--window-id");
+	if( id != 0 )
 	{
-		window = /*RootWindowOfScreen(screen);*/AppWindow::root_window (screen_ptr);
+		window = (Window) id;
+		XWindowAttributes xgwa;
+		XGetWindowAttributes (display, window, &xgwa);
+
+		xgwa.your_event_mask |= KeyPressMask | StructureNotifyMask;
+      		XSelectInput (display, window, xgwa.your_event_mask);
+
+		if (! (xgwa.all_event_masks & (ButtonPressMask | ButtonReleaseMask)) )
+			XSelectInput (display, window, (xgwa.your_event_mask | ButtonPressMask | ButtonReleaseMask));
+	}
+	else if( Options::get("--root") )
+	{
+		window = AppWindow::root_window (screen_ptr);
 		XWindowAttributes xgwa;
 		XGetWindowAttributes (display, window, &xgwa);
 		//visual_warning (xgwa.screen, window, xgwa.visual, xgwa.colormap, False);

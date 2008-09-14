@@ -100,6 +100,7 @@ Matrix::Matrix(unsigned int n, int widht, int height):video(NULL), program(NULL)
 	program->attach(vshader);
 	program->attach(fshader);
 	program->link();
+	program->validate();
 	program->log();
 }
 
@@ -127,13 +128,11 @@ void Matrix::draw()
 //	glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
 	glTranslatef(-32.0,24.0,-25.0f);
 
-//	glTranslatef(0,0,-10.0f);
+//	glTranslatef(0,0,-20.0f);
 //	glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
 
-	if( video )
+	if( video && program->use() )
 	{
-		program->use();
-
 		program->set_sampler("letter",0);
 		program->set_sampler("video", 1);
 		program->set_uniform("res", video_res);
@@ -234,6 +233,7 @@ void Matrix::Strip::draw()
 	glBegin(GL_TRIANGLE_STRIP);
 
 
+
 	float xi = 0.0f;
 	float zi = 0.0f;
 
@@ -255,7 +255,7 @@ void Matrix::Strip::draw()
 		float z_next = zi + size * cosf(phi);
 		GLfloat a = 1.0 - cosf(float((int(wave_y - i)%80))*(3.1415926f/180.0f));
 
-		GLfloat s = 0;//(1.0f/32.0f) * glyphs[i];
+		GLfloat s = (1.0f/32.0f) * glyphs[i];
 		
 		glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
 		glTexCoord2f(s, 0.0f); 			glVertex3f(xi,yi,zi);	
@@ -268,6 +268,7 @@ void Matrix::Strip::draw()
 		xi = x_next;
 		zi = z_next;
 	}
+	glEnd();
 */
 }
 
@@ -276,7 +277,7 @@ void Matrix::Strip::tick(unsigned long usec, bool update)
 	double delta  = double(usec)/1000000.0;
 	wave_y += wave_speed * delta;
 
-//	spinner_end = n_glyphs;
+//	spinner_end = n_glyphs -1 ;
 	if(spinner_end < n_glyphs)
 	{
 		spinner_end += spinner_speed * delta;

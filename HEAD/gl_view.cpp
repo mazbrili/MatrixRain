@@ -13,9 +13,6 @@
 #include "gl_view.h"
 #include "app_window.h"
 
-extern FILE* log22;
-
-
 //--------------------------------------------------------------
 GLView::GLView(AppWindow* win)
 {
@@ -33,8 +30,6 @@ GLView::GLView(AppWindow* win)
 	vi_out = XGetVisualInfo (dpy, VisualScreenMask|VisualIDMask, &vi_in, &out_count);
 	if (! vi_out)
 	{
-//		fprintf(::log22,"%s %d vi_out == false\n", __FILE__, __LINE__);	
-//		fflush(log22);
 		abort ();
 	}
 
@@ -43,8 +38,6 @@ GLView::GLView(AppWindow* win)
 	//	orig_ehandler = XSetErrorHandler (BadValue_ehandler);
 		glx_context = glXCreateContext (dpy, vi_out, 0, True);
 
-//		fprintf(::log22,"%s %d GL context %X\n", __FILE__, __LINE__, glx_context);
-//		fflush(log22);
 		XSync (dpy, False);
 	//	XSetErrorHandler (orig_ehandler);
 	//	if (got_error)
@@ -70,6 +63,10 @@ GLView::GLView(AppWindow* win)
 			glClearIndex (BlackPixelOfScreen (screen));
 		}
 	}
+
+	fprintf(stderr, "GL version :%s\n", glGetString(GL_VERSION));
+	fprintf(stderr, "GL renderer:%s\n", glGetString(GL_RENDERER));
+	fprintf(stderr, "GL vendor  :%s\n", glGetString(GL_VENDOR));
 
 	glShadeModel(GL_SMOOTH);
 
@@ -102,7 +99,6 @@ unsigned int GLView::draw()
 		glColor3f(0.0f, 0.0, 1.0f); glVertex3f(10.0, 0.0, 0.0);
 	glEnd();
 
-	glXSwapBuffers(dpy, window);
 	return 0;
 }
 

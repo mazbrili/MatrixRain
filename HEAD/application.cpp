@@ -14,7 +14,7 @@
 //--------------------------------------------------------------
 Application::Application():window(NULL)
 {
-	window = new AppWindow(Options::get("--root"));
+	window = new AppWindow();
 	window->clear_background(0x00000000 /*black*/);
 }
 
