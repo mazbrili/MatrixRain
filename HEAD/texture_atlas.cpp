@@ -12,6 +12,7 @@
 
 TextureAtlas::TextureAtlas(unsigned int n):TextureArray(n)
 {
+	// Loading resources from LARGE RESOURCE PACKAGE or something like that :)
 	textures[0] = new TextureAtlas::Texture(matrix_img,matrix_img_width, matrix_img_height,texture_id[0]);
 }
 
@@ -26,7 +27,6 @@ TextureAtlas::Texture::Texture(const unsigned char* raw_bitmap, unsigned int wid
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_DECAL);
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, raw_bitmap);
 }
 //--------------------------------------------------------------

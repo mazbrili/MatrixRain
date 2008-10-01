@@ -21,6 +21,7 @@ public:
 private:
 
 	class AppWindow* window;
+	class Capture*	capture;
 };
 //--------------------------------------------------------------
 #endif//APPLICATION_H

@@ -10,6 +10,8 @@
 #define GL_VIEW_H
 //--------------------------------------------------------------
 #include <GL/glx.h>
+
+#include "stuff.h"
 //--------------------------------------------------------------
 class GLView
 {
@@ -26,10 +28,15 @@ public:
 	static bool check_support(Screen *screen, const char *window_desc, Visual *visual);
 	static Visual* choose_visual(Display *dpy, int screen_num);
 
+	const Version& version()const	{ return gl_version;  }
+	const GLubyte* renderer()const	{ return glGetString(GL_RENDERER); }
+	const GLubyte* vendor()const	{ return glGetString(GL_VENDOR);   }
+
 private:
 	GLXContext glx_context;
 	Display *dpy;
 	Window window;
+	Version gl_version;
 };
 //--------------------------------------------------------------
 #endif//GL_VIEW_H

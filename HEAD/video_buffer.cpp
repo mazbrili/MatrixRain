@@ -32,7 +32,6 @@ VideoBuffer::VideoFrame::VideoFrame(char* data, unsigned int width, unsigned int
 //	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 4.0f);
 //	glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -1.0f);
 //	glTexParameteri (GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-	glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
 	
 	glTexImage2D (GL_TEXTURE_2D, 0, GL_LUMINANCE8, tex_width, tex_height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, dummy);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
@@ -67,9 +66,9 @@ void VideoBuffer::operator()(const Bitmap& frame, unsigned long time)
 	video->update(frame.data(), 0, 0, frame.width(), frame.height());
 }
 
-void VideoBuffer::bind()const
+void VideoBuffer::bind(GLint texture_function)const
 {
-	textures[top_index]->bind();
+	textures[top_index]->bind(texture_function);
 }
 //--------------------------------------------------------------
 

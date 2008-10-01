@@ -17,6 +17,7 @@ Options::Option default_opts[]={
 	{ "--window-id","0",		"specific X window ID"				},
 	{ "--width",	"600",		"setup a width of screensaver window"		},
   	{ "--height",	"480",		"setup a height of screensaver window"		},
+	{ "--no-shaders","false",	"force disable shaders"				},
 	{ "--device",	"/dev/video0",	"setup a device for capturing video"		},
 	{ "--convert",	"false",	"my little bitmap converter. usage: mrain --convert <input.bmp> <output.filename>" },
 	{ NULL, 	NULL,		NULL	},
@@ -34,6 +35,8 @@ int main(int argc, char **argv)
 	{
 		return convert_bmp_2_include_array(argv[2], argv[3]) == false;
 	}
+
+	Version v("1.2   fwer 213 ");
 
 
 //	log22 = fopen("/home/sqrt/mrain.log", "ab");

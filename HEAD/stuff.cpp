@@ -12,8 +12,6 @@
 //--------------------------------------------------------------
 // The following 'random' numbers are taken from CRC, 18th Edition, page 622.
 
-Random grnd;
-
 unsigned int Random::table[Random::table_size] = {
  035340171546, 010401501101, 022364657325, 024130436022, 002167303062, /*  5 */
  037570375137, 037210607110, 016272055420, 023011770546, 017143426366, /* 10 */
@@ -98,6 +96,36 @@ unsigned long Timer::tick()
 
 	return delta;
 }
+
+Version::Version(const char* string):iversion(0)
+{
+	unsigned int major=0;
+	unsigned int minor=0;
+	unsigned int release=0;
+	sscanf(string, "%d.%d.%d", &major, &minor, &release);
+
+	iversion = char(major)<<16 | char(minor)<<8 | char(release);
+}
+
+Version::Version(unsigned char major, unsigned char minor, unsigned char release):iversion(0)
+{
+	iversion = major<<16 | minor<<8 | release;
+}
+
+Version& Version::operator=(const char* str)
+{
+	Version v(str);
+	iversion = v.iversion;
+	return *this;
+}
+
+bool Version::operator>=(const char* str)
+{
+	Version v(str);
+	return iversion >= v.iversion;
+}
+
+
 
 bool convert_bmp_2_include_array(char* bmp_file, char* array_name)
 {

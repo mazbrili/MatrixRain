@@ -164,7 +164,7 @@ bool Options::usage()
 		fprintf(stderr, "possible arguments:\n");
 		for(int i=0; options[i].name; i++)
 		{
-			fprintf(stderr, "\t%-10s value:%-20s\t%s\n",options[i].name, options[i].value, options[i].comment);
+			fprintf(stderr, "\t%-12s value:%-12s\t%s\n",options[i].name, options[i].value, options[i].comment);
 		}
 		return true;
 	}

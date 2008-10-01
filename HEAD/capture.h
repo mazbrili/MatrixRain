@@ -15,6 +15,17 @@
 class Capture
 {
 private:
+	struct Device
+	{
+	public:
+		Device(const char* name);
+		~Device();
+
+		operator int(){ return fd; }
+	private:
+		int fd;
+	};
+
 	struct MMapBuffer
 	{
 		MMapBuffer(int fd, size_t len, off_t off);
@@ -107,7 +118,7 @@ private:
 	char* buffer;
 
 
-	int		device;
+	Device		device;
 	MMapBuffer**	buffers;
 	unsigned int	num_buffers;
 	const Decoder*	decoders;

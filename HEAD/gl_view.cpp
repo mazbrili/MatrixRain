@@ -64,20 +64,19 @@ GLView::GLView(AppWindow* win)
 		}
 	}
 
+	
 	fprintf(stderr, "GL version :%s\n", glGetString(GL_VERSION));
 	fprintf(stderr, "GL renderer:%s\n", glGetString(GL_RENDERER));
 	fprintf(stderr, "GL vendor  :%s\n", glGetString(GL_VENDOR));
 
+	gl_version = (const char*)glGetString(GL_VERSION);
+
 	glShadeModel(GL_SMOOTH);
 
 	glEnable(GL_DEPTH_TEST);
-//	glDisable(GL_CULL_FACE);
 	glBlendFunc (GL_ONE_MINUS_SRC_ALPHA,  GL_SRC_ALPHA);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glXSwapBuffers(dpy, window);
 
 	reshape( xgwa.width, xgwa.height );
 }

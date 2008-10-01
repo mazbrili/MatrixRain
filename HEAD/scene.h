@@ -33,60 +33,135 @@ private:
 	float height;
 };
 
-class Matrix
-{	
+class Matrix	// Simply Matrix effect
+{
+protected:
+	struct T2F_V3F_C4F
+	{
+		union	// T2F
+		{
+			struct{ GLfloat st[2]; };
+			struct{ GLfloat s,t;   };
+		};
+
+		union	// V3F
+		{
+			struct{ GLfloat xyz[3]; };
+			struct{ GLfloat x,y,z;  };
+		};				
+
+		union	// C4F
+		{
+			struct{ GLfloat rgba[4]; };
+			struct{ GLfloat r,g,b,a; };
+		};
+	};
+
+	struct T2F
+	{
+		union	// T2F
+		{
+			struct{ GLfloat st[2]; };
+			struct{ GLfloat s,t;  };
+		};
+	};
+
 	class Strip
 	{
 	public:
-		Strip(unsigned int n, GLfloat ax, GLfloat ay, GLfloat az, GLfloat spinner, GLfloat wave);
+		Strip(unsigned int n, T2F_V3F_C4F* interleaved_arrays, GLfloat ax, GLfloat ay, GLfloat az, GLfloat spinner, GLfloat wave);
 		~Strip();
 
-		void draw();
+		void draw(GLint* first, GLsizei* count);
 		void tick(unsigned long usec, bool update);
 
 	private:
-		
+	
+		T2F_V3F_C4F*	array;
+
 		GLfloat x, y, z;
 		GLfloat size;
-		GLfloat dx, dy, dz;
+
+		float ph;
+		float r;
+
+		float angle;
+	
 
 		GLfloat spinner_begin;
 		GLfloat spinner_end;
 		GLfloat spinner_speed;
 
-		int* glyphs;
 		int end_glyphs;
 		unsigned int n_glyphs;
 
-		GLfloat wave_y;
+		GLfloat wave;
 		GLfloat wave_speed;
 	};
 public:
-	Matrix(unsigned int n, int widht, int height);
+	Matrix(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture);
 	~Matrix();
-	void set_video(const VideoBuffer* buffer);
 	
 	void draw();
 	void tick(unsigned long usec);
+		
+	virtual void set_video(const VideoBuffer* buffer, int widht, int height);	
 	
-	const VideoBuffer* video;
+	virtual void pre_draw();
+	virtual void post_draw();
+	
 	TextureAtlas::Texture* letter;
-	GPU_Program* program;
 
-private:
+protected:
 
-	unsigned int num;
+	T2F_V3F_C4F* 	interleaved_arrays;
+	GLint*		firsts;
+	GLsizei*	counts;
+
+
+	unsigned int nstrips;	// Number of strips
+	unsigned int nglyphs;	// Number of glyphs
 	Strip** strips;
 	Random grid_random;
 	Timer glyph_update;
-	float video_res[4];
+};
+
+
+class MatrixVideo:public Matrix	// Matrix and Video effect
+{
+public:
+	MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture);
+	~MatrixVideo();
+
+	
+	virtual void set_video(const VideoBuffer* buffer, int widht, int height);	
+	
+	virtual void pre_draw();
+	virtual void post_draw();
+	
+protected:
+	T2F* video_st;			// Texture coords
+	const VideoBuffer* video;	// Texture instance
+};
+
+class MatrixVideoFX:public MatrixVideo	// Matrix Video with Vertex Shader FX
+{
+public:
+	MatrixVideoFX(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture);
+	~MatrixVideoFX();
+
+	virtual void pre_draw();
+	virtual void post_draw();
+	
+protected:
+	GPU_Program* program;
 };
 
 
 class Scene:public GLView
 {
 public:
-	Scene(class AppWindow* win);
+	Scene(class AppWindow* win, bool capturing_enable);
 	~Scene();
 	
 	unsigned int draw();
@@ -94,8 +169,8 @@ public:
 	bool event_handler(Display* dpy, Window window, XEvent& event);
 
 	TextureAtlas atlas;
-	VideoScreen screen;	// Real Time Video
-	Matrix	matrix;
+	VideoScreen* screen;	// Real Time Video
+	Matrix* matrix;
 
 	static float user_a;
 	static float user_b;

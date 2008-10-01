@@ -7,6 +7,7 @@
 
 //--------------------------------------------------------------
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <stdexcept>
 #include <X11/Xatom.h>

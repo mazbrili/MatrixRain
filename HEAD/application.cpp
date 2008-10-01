@@ -12,36 +12,43 @@
 #include "bitmap.h"
 #include "scene.h"
 //--------------------------------------------------------------
-Application::Application():window(NULL)
+Application::Application():window(NULL),capture(NULL)
 {
 	window = new AppWindow();
-	window->clear_background(0x00000000 /*black*/);
+	window->clear_background(0x00000000); // black
+
+	try
+	{
+		capture = new Capture(640, 480, Options::get("--device"));
+	}
+	catch(Capture::runtime_error& error)
+	{
+		fprintf(stderr, "capture_error: %s\n", error.what() );
+	}
 }
 
 Application::~Application()
 {
+	delete capture;
 	delete window;
 }
 
 int Application::run()
 {
 	Timer timer;
-	Scene scene(window);
+	Scene scene(window, capture != NULL);
 
-	try
+	if(capture != NULL)
 	{
-		Capture capture(640, 480, Options::get("--device"));
-
 		Bitmap target;
-		target << capture;
-		VideoBuffer frames_stack(target, 0, 100);
+		target << *capture;
+		VideoBuffer frames_stack(target, 0, 10000);
 
-		scene.screen.set_video(&frames_stack);
-		scene.matrix.set_video(&frames_stack);
-	
+		scene.matrix->set_video(&frames_stack, capture->width(), capture->height());
+
 		while ( window->process_events (&scene) )
 		{
-			capture();
+			(*capture)();
 			frames_stack( target, timer.time() );
 
 			scene.draw();
@@ -49,10 +56,8 @@ int Application::run()
 			scene.swap_buffers();
 		}
 	}
-	catch(Capture::runtime_error& error)
+	else
 	{
-		fprintf(stderr, "capture_error: %p\n", error.what() );
-		
 		while ( window->process_events (&scene) )
 		{
 			scene.draw();

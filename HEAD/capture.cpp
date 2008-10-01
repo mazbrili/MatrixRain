@@ -34,6 +34,32 @@ int xioctl(int fd, int request, void *arg)
         return r;
 }
 
+Capture::Device::Device(const char* dev_name):fd(-1)
+{
+	struct stat st={0};
+        if (-1 == stat (dev_name, &st))
+	{
+		throw runtime_error("'%s' is not exist", dev_name);
+        }
+
+        if (!S_ISCHR (st.st_mode))
+	{
+		throw runtime_error("'%s' is not a character device", dev_name);
+        }
+
+        fd = open (dev_name, O_RDWR | O_NONBLOCK, 0);
+
+        if (-1 == fd)
+	{
+                throw runtime_error("can not open '%s'", dev_name);
+        }
+}
+
+Capture::Device::~Device()
+{
+	close(fd);
+}
+
 Capture::MMapBuffer::MMapBuffer(int fd, size_t len, off_t off):length(len)
 {
 	start = mmap (NULL, length, PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */, fd, off);
@@ -46,27 +72,8 @@ Capture::MMapBuffer::~MMapBuffer()
 		throw runtime_error("munmap failed");
 }
 
-Capture::Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_name): buffer(NULL), buffers(NULL), decoders(NULL)
+Capture::Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_name): buffer(NULL), device(dev_name), buffers(NULL), decoders(NULL)
 {
-	struct stat st={0};
-        if (-1 == stat (dev_name, &st))
-	{
-		throw runtime_error("'%s' is not exist", dev_name);
-        }
-
-        if (!S_ISCHR (st.st_mode))
-	{
-		throw runtime_error("'%s' is not a character device", dev_name);
-        }
-//		throw runtime_error("'%s' is not a character device", dev_name);
-
-        device = open (dev_name, O_RDWR | O_NONBLOCK, 0);
-
-        if (-1 == device)
-	{
-                throw runtime_error("can not open '%s'", dev_name);
-        }
-
 	device_capcabilities(dev_name);
 
 	//major device number of 81
@@ -177,7 +184,7 @@ Capture::Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_nam
 	struct v4l2_requestbuffers req;
         CLEAR (req);
 
-        req.count	= 8;
+        req.count	= 4;
         req.type	= V4L2_BUF_TYPE_VIDEO_CAPTURE;
         req.memory	= V4L2_MEMORY_MMAP;
 
@@ -185,7 +192,7 @@ Capture::Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_nam
 	{
 		if (EINVAL == errno)
 		{
-			runtime_error("'%s' does not support memory mapping\n", dev_name);
+			throw runtime_error("'%s' does not support memory mapping\n", dev_name);
                 }
 		else
 		{
@@ -209,40 +216,29 @@ Capture::Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_nam
                 buf.memory      = V4L2_MEMORY_MMAP;
                 buf.index       = i;
 
-                if (-1 == xioctl (device, VIDIOC_QUERYBUF, &buf))
-                        throw runtime_error("VIDIOC_QUERYBUF");
+                xioctl (device, VIDIOC_QUERYBUF, &buf);
 
 		buffers[i] = new MMapBuffer(device, buf.length, buf.m.offset);
 
-        	if (-1 == xioctl (device, VIDIOC_QBUF, &buf))
-                    	throw runtime_error("VIDIOC_QBUF");
-
+        	xioctl (device, VIDIOC_QBUF, &buf);
         }
 
 	enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-	if (-1 == xioctl (device, VIDIOC_STREAMON, &type))
-		throw runtime_error("VIDIOC_STREAMON");
+	xioctl (device, VIDIOC_STREAMON, &type);
 }
 
 Capture::~Capture()
 {
 	enum v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-	if (-1 == xioctl (device, VIDIOC_STREAMOFF, &type))
-		throw runtime_error("VIDIOC_STREAMOFF");
+	xioctl(device, VIDIOC_STREAMOFF, &type);
 
 
 	for (unsigned int i=0; i<num_buffers; ++i)
 		delete buffers[i];
 
 	delete[] buffers;
-
-	if (-1 == close (device))
-	{
-	        throw runtime_error("close");
-	}
-        device = 0;
 }
 
 const char* Capture::operator()()
@@ -252,7 +248,7 @@ const char* Capture::operator()()
 	FD_ZERO (&fds);
 	FD_SET (device, &fds);
 
-	timeval timeout={0, 50000};
+	timeval timeout={0, 5000};
 
 	int r = select (device+1, &fds, NULL, NULL, &timeout);
 

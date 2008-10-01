@@ -29,10 +29,6 @@ private:
 };
 
 
-extern Random grnd;
-
-
-
 class Timer
 {
 public:
@@ -44,6 +40,27 @@ public:
 private:
 	struct timeval prev;
 	struct timeval begin;
+};
+
+class Version
+{
+public:
+	Version(const char* string);
+	Version(unsigned char major=0, unsigned char minor=0, unsigned char release=0);
+	Version(const Version& v):iversion(v.iversion){}
+
+	Version& operator=(const Version& v){ iversion = v.iversion; return *this; }
+	Version& operator=(const char* str);
+
+	inline bool operator>=(Version v)const{ return iversion >= v.iversion; }
+	inline bool operator<=(Version v)const{ return iversion <= v.iversion; }
+	inline bool operator==(Version v)const{ return iversion == v.iversion; }
+
+	bool operator>=(const char* str);
+
+
+private:
+	unsigned int iversion; 
 };
 
 bool convert_bmp_2_include_array(char* bmp_file, char* array_name);
