@@ -36,13 +36,6 @@ int main(int argc, char **argv)
 		return convert_bmp_2_include_array(argv[2], argv[3]) == false;
 	}
 
-	Version v("1.2   fwer 213 ");
-
-
-//	log22 = fopen("/home/sqrt/mrain.log", "ab");
-//	fprintf(log22,"%s %d", __FILE__, __LINE__);
-//	fflush(log22);
-
 	Application application;
 
 	return application.run();

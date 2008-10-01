@@ -77,14 +77,14 @@ Matrix::~Matrix()
 void Matrix::draw()
 {	
 	glLoadIdentity();
-	glTranslatef(-32.0,24.0,-25.0f);
+//	glTranslatef(-32.0,24.0,-25.0f);
 
 //	glTranslatef(0.0, 0.0, -75.0f);
 
-//	glTranslatef(0,-2.5f,-20.0f);
-//	glRotatef(15.0f, 1.0f, 0.0f, 0.0f);
+	glTranslatef(0,-2.5f,-20.0f);
+	glRotatef(15.0f, 1.0f, 0.0f, 0.0f);
 
-	pre_draw();
+/*	pre_draw();
 	
 	for(unsigned int i=0; i<nstrips; i++)
 	{
@@ -92,9 +92,11 @@ void Matrix::draw()
 		firsts[i] += (i * nglyphs<<2);
 	}
 
-	glMultiDrawArrays(GL_TRIANGLE_STRIP, firsts, counts, nstrips);
-
+	glMultiDrawArrays(GL_TRIANGLE_STRIP, firsts, counts, nstrips);		
 	post_draw();
+*/
+	strips[0]->draw(&firsts[0], &counts[0]);
+
 }
 
 void Matrix::tick(unsigned long usec)
@@ -225,7 +227,7 @@ Matrix::Strip::~Strip()
 
 void Matrix::Strip::draw(GLint* first, GLsizei* count)
 {
-	*first = 0;
+/*	*first = 0;
 	*count = spinner_end*4;
 
 	GLfloat yi = y; 
@@ -242,7 +244,7 @@ void Matrix::Strip::draw(GLint* first, GLsizei* count)
 		glTexCoord2f(s+1.0f/32.0f, 0.0f);	glVertex3f(x+size,yi-size,z);
 	}
 	glEnd();
-
+*/
 
 /*	glRotatef(angle, 0.0f, 1.0f, 0.0f);
 
@@ -285,7 +287,7 @@ void Matrix::Strip::draw(GLint* first, GLsizei* count)
 	glEnd();
 */
 
-/*	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 		
 	glBegin(GL_LINE_STRIP);
 
@@ -308,7 +310,7 @@ void Matrix::Strip::draw(GLint* first, GLsizei* count)
 	//	glVertex3f(p, i, 0.0f);
 		glVertex3f(x, y, z);
 	}
-	glEnd();*/
+	glEnd();
 }
 
 float f(float x){ return x*x*21.f - x*19.f + 4.5f; }
