@@ -1,3 +1,5 @@
+Tue, 14 Oct 2008 10:54:08 +0300
+	Performance refactoring. Add new option --no-shaders. Begin twister-effect implemantation.
 Mon, 15 Sep 2008 00:46:10 +0300
 	Add new console options --help and --window-id. GL-logging has been enlarged.
 Thu, 11 Sep 2008 17:46:36 +0300
