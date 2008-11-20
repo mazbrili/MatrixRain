@@ -16,8 +16,58 @@
 class GLView
 {
 public:
+
+	struct T2F_V3F_C4F
+	{
+		union	// T2F
+		{
+			struct{ GLfloat st[2]; };
+			struct{ GLfloat s,t;   };
+		};
+
+		union	// V3F
+		{
+			struct{ GLfloat xyz[3]; };
+			struct{ GLfloat x,y,z;  };
+		};				
+
+		union	// C4F
+		{
+			struct{ GLfloat rgba[4]; };
+			struct{ GLfloat r,g,b,a; };
+		};
+	};
+
+	struct T2F
+	{
+		union	// T2F
+		{
+			struct{ GLfloat st[2]; };
+			struct{ GLfloat s,t;  };
+		};
+	};
+
+	struct V3F
+	{
+		union	// V3F
+		{
+			struct{ GLfloat xyz[3]; };
+			struct{ GLfloat x,y,z;  };
+		};
+	};
+
+	struct C4F
+	{
+		union	// C4F
+		{
+			struct{ GLfloat rgba[4]; };
+			struct{ GLfloat r,g,b,a; };
+		};
+	};
+
+
 	GLView(class AppWindow* win);
-	~GLView();
+	virtual ~GLView();
 
 	virtual unsigned int draw();
 	virtual unsigned int tick(unsigned long usec);

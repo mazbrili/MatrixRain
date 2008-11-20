@@ -184,8 +184,6 @@ void AppWindow::clear_background(unsigned int long color)
 
 int AppWindow::x_error_handler(Display *dpy, XErrorEvent *error)
 {
-//	fprintf(log22,"%s %d x_error_handler ", __FILE__, __LINE__);
-
 	char buffer[BUFSIZ];
 	char mesg[BUFSIZ];
 	const char* mtype = "XlibMessage";
@@ -250,7 +248,7 @@ Window AppWindow::root_window(Screen *screen)
 				if (XGetWindowProperty(dpy, children[i],__SWM_VROOT, 0, 1, False, XA_WINDOW,
 					&actual_type, &actual_format, &nitems, &bytesafter, &newRoot) == Success && newRoot)
 				{
-					fprintf(stderr,"SET ROOT WINDOW! %p\n", newRoot);
+//					fprintf(stderr,"SET ROOT WINDOW! %p\n", newRoot);
 					root = *((Window *) newRoot);
 //					fprintf(log22,"%s %d root %i", __FILE__, __LINE__, root);
 	

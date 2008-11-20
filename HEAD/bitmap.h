@@ -92,9 +92,11 @@ public:
 		info.biClrUsed = 0; 
 		info.biClrImportant = 0;
 
+		size_t res = 0;
+
 		FILE* mfd = fopen(bmp_file, "wb");
-		fwrite(&file, sizeof(file), 1, mfd);
-		fwrite(&info, sizeof(info), 1, mfd);
+		res = fwrite(&file, sizeof(file), 1, mfd);
+		res = fwrite(&info, sizeof(info), 1, mfd);
 
 		char* pixel = buffer;
 		for(unsigned int i=0; i<image_height; i++)
@@ -102,11 +104,11 @@ public:
 			for(unsigned int j=0; j<image_width; j++)
 			{
 				char bmp_pixel[3]={*pixel,*pixel,*pixel};
-				fwrite(bmp_pixel, sizeof(bmp_pixel), 1, mfd);
+				res = fwrite(bmp_pixel, sizeof(bmp_pixel), 1, mfd);
 				pixel++;
 			}
 			char dummy[dob_width];
-			fwrite(dummy, sizeof(dummy), 1, mfd);
+			res = fwrite(dummy, sizeof(dummy), 1, mfd);
 		}
 
 		fclose(mfd);

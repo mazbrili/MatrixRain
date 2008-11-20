@@ -21,16 +21,19 @@ public:
 	
 
 	unsigned int operator()();
-	float operator()(float f);
+	float operator()(float f);	
+	unsigned int operator()(unsigned int i);
 private:
 	int index1, index2;
 
 	static unsigned int table[table_size];
 };
 
+extern Random grandom;
 
 class Timer
 {
+	friend class Waiter;
 public:
 	Timer();
 
@@ -41,6 +44,40 @@ private:
 	struct timeval prev;
 	struct timeval begin;
 };
+
+class Counter
+{
+public:
+	explicit Counter(unsigned int l):limit(l), count(0U){}
+
+	inline unsigned int test(unsigned int delta)
+	{	// integer calculations !
+		// Wirning ! There is an owerflow !
+		count += delta;
+		unsigned int uptimes = count/limit;
+		count %= limit;
+		return uptimes;
+	}
+private:
+	unsigned int limit;
+	unsigned int count;
+};
+
+class Waiter
+{
+	static Timer timer;
+public:
+	Waiter(unsigned long microseconds);
+
+	bool ready();
+	static void tick();
+private:
+	unsigned long sec;
+	unsigned long usec;
+	struct timeval end;
+};
+
+
 
 class Version
 {

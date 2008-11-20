@@ -10,6 +10,9 @@
 #include <cstdarg>
 #include "stuff.h"
 //--------------------------------------------------------------
+Random grandom;
+//--------------------------------------------------------------
+
 // The following 'random' numbers are taken from CRC, 18th Edition, page 622.
 
 unsigned int Random::table[Random::table_size] = {
@@ -67,6 +70,13 @@ float Random::operator()(float f)
 	return (tmp < 0) ? -tmp : tmp;
 }
 
+unsigned int Random::operator()(unsigned int r)
+{
+	return (*this)() % r;
+}
+
+//--------------------------------------------------------------
+
 Timer::Timer()
 {
 	reset();
@@ -96,6 +106,47 @@ unsigned long Timer::tick()
 
 	return delta;
 }
+
+//--------------------------------------------------------------
+
+Timer Waiter::timer;
+
+Waiter::Waiter(unsigned long microseconds):sec(microseconds / 1000000), usec(microseconds % 1000000)
+{
+	end.tv_sec = timer.prev.tv_sec  + sec;
+	end.tv_usec = timer.prev.tv_usec+usec;
+}
+
+bool Waiter::ready()
+{
+	bool done = false;
+	if(end.tv_sec < timer.prev.tv_sec)
+	{
+		done = true;
+	}
+	else if(end.tv_sec == timer.prev.tv_sec)
+	{
+		done = (end.tv_usec <= timer.prev.tv_usec);
+	}
+
+	if( done )
+	{	
+//		end.tv_sec = timer.prev.tv_sec  + sec;
+//		end.tv_usec = timer.prev.tv_usec+usec;
+
+		unsigned long u = end.tv_usec+usec;
+		end.tv_usec= u % 1000000;
+		end.tv_sec+= sec + u / 1000000;
+	}
+	return done;
+}
+
+void Waiter::tick()
+{
+	timer.tick();
+}
+
+//--------------------------------------------------------------
 
 Version::Version(const char* string):iversion(0)
 {
@@ -175,13 +226,15 @@ bool convert_bmp_2_include_array(char* bmp_file, char* array_name)
 			p++;
 	}
 
+	size_t res =0;
+
 	FILEHEADER file_header;
-	fread(&file_header, sizeof(FILEHEADER), 1, src );
+	res = fread(&file_header, sizeof(FILEHEADER), 1, src );
 	if(file_header.bfType[0] != 'B' || file_header.bfType[1] != 'M' )
 		return false;
 
 	INFOHEADER info_header;
-	fread(&info_header, sizeof(INFOHEADER), 1, src );
+	res = fread(&info_header, sizeof(INFOHEADER), 1, src );
 
 	unsigned long width = info_header.biWidth;
 	unsigned long height = info_header.biHeight;
@@ -198,12 +251,7 @@ bool convert_bmp_2_include_array(char* bmp_file, char* array_name)
 
 		for(int k=0; k<count; k+=4)
 		{		
-			unsigned int b = buffer[k+3];
-			if(b == 0)
-			{
-				fprintf(dst,"0x0, 0xFF, 0x0, 0x0, ");
-			}
-			else	fprintf(dst,"0x0, 0x0, 0x0, 0xFF, ");
+			fprintf(dst, buffer[k+3] ? "0x0, " : "0xFF, ");
 		}
 		fprintf(dst,"\n");
 	}

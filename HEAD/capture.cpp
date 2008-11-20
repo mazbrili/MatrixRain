@@ -436,9 +436,9 @@ void Capture::YUYVtoRGB(const char* src, const char* end, char* dst)
 
 		dst +=3;
 
-		dst[0] = float(y2) + r;			
-		dst[1] = float(y2) + g;
-		dst[2] = float(y2) + b;
+		dst[0] = y2;			
+		dst[1] = y2;
+		dst[2] = y2;
 
 		dst +=3;
 	}
