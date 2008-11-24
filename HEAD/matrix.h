@@ -10,6 +10,8 @@
 #define MATRIX_H
 //--------------------------------------------------------------
 #include <cmath>
+#include <cstring>
+#include <cassert>
 
 #include "gl_view.h"
 #include "gpu_program.h"
@@ -58,7 +60,7 @@ protected:
 	{
 	public:
 
-		Animation( unsigned int n, const vector& a, const vector& b, float h1, float h2, float r, float p, float q, float rotates)
+		Animation( unsigned int n, float size, const vector& a, const vector& b, float h1, float h2, float r, float p, float q, float rotates)
 		:nframes(n), spline(key_points, 7), twister(r, h2, p, q, rotates)
 		{
 			key_points[0] = a;
@@ -76,9 +78,52 @@ protected:
 		//	key_points[7] = vector(xa, ya, za);
 			key_points[8] = a;
 
+			vcache = new GLView::V3F[nframes * 4];
+
+			for(unsigned int i=0; i<nframes-1; i++)
+			{
+				vector v0 = get_point(i);
+				vector v1 = v0;
+				v1.x += size;
+				vector v2 = get_point(i+1);
+				vector v3 = v2;
+				v3.x += size;
+
+				unsigned int index = i<<2; // i*4
+
+				vcache[index].x = v0.x;
+				vcache[index].y = v0.y;
+				vcache[index].z = v0.z;
+				
+				vcache[index+1].x = v1.x;
+				vcache[index+1].y = v1.y;
+				vcache[index+1].z = v1.z;
+				
+				vcache[index+2].x = v2.x;
+				vcache[index+2].y = v2.y;
+				vcache[index+2].z = v2.z;
+				
+				vcache[index+3].x = v3.x;
+				vcache[index+3].y = v3.y;
+				vcache[index+3].z = v3.z;
+			}
+		}
+		
+		~Animation()
+		{
+			delete[] vcache;
 		}
 
-		vector operator[](unsigned int frame)
+		inline void vertexcpy(GLView::V3F* array, unsigned int num, unsigned int begin_frame)
+		{
+			assert(sizeof(vector) == sizeof(GLView::V3F));
+			memcpy(array, vcache+(begin_frame*4), sizeof(vector)*num );
+		}
+
+		const unsigned int nframes;
+
+	private:
+		vector get_point(unsigned int frame)
 		{
 			frame %= nframes;
 			float t = double(frame)/nframes;
@@ -90,26 +135,28 @@ protected:
 			}
 			else return key_points[7]+twister(0.018 +(t-s)/(1.0f-s) );
 		}
-
-		const unsigned int nframes;
-
-	private:
+			
 		vector key_points[9];
 		HSpline spline;
 		Twister twister;
+		GLView::V3F* vcache;
 	};
 
 
 	class Strip
 	{
 	public:
-		Strip(unsigned int n, GLView::T2F_V3F_C4F* interleaved_arrays, GLfloat x, GLfloat y, GLfloat z, GLfloat spinner, GLfloat wave, float h1, float h2, float r, float p, float q, float rotates);
+		Strip(unsigned int n,
+		GLView::T2F* g, GLView::V3F* v, GLView::C4F* c,
+		GLfloat x, GLfloat y, GLfloat z, float h1, float h2, float r, float p, float q, float rotates);
 		~Strip();
 
 		void draw(GLint* first, GLsizei* count);
 		void tick(unsigned long usec);
 
-		GLView::T2F_V3F_C4F* array;
+		GLView::T2F*	glyph_st;
+		GLView::V3F*	vertexies;
+		GLView::C4F* 	colors;
 		GLfloat size;
 
 		Animation animation;
@@ -125,6 +172,9 @@ protected:
 		int adelay;		// animation delay bad idea, it will be refactored :(
 		unsigned int aframe;	// animation frame
 		bool arunning;		// animation running
+		
+	private:
+		void wave_tick(unsigned long usec);
 	};
 
 
@@ -139,12 +189,24 @@ public:
 	
 	virtual void pre_draw();
 	virtual void post_draw();
-	
-	TextureAtlas::Texture* letter;
 
 protected:
 
-	GLView::T2F_V3F_C4F* 	interleaved_arrays;
+	// array of spawners
+	typedef void (Matrix::*spawn)();
+	static const Matrix::spawn spawners[];
+	
+	void spawn_a();
+	void spawn_b();
+	void spawn_c();
+	void spawn_d();
+
+	TextureAtlas::Texture* letter;
+
+	GLView::T2F*	glyph_st;
+	GLView::V3F*	vertexies;
+	GLView::C4F* 	colors;
+
 	GLint*		firsts;
 	GLsizei*	counts;
 

@@ -36,6 +36,8 @@ Application::~Application()
 int Application::run()
 {
 	Timer timer;
+	Timer fps_limit;
+
 	Scene scene(window, capture != NULL);
 
 	if(capture != NULL)
@@ -48,21 +50,38 @@ int Application::run()
 
 		while ( window->process_events (&scene) )
 		{
-			(*capture)();
-			frames_stack( target, timer.time() );
+			if( fps_limit.time() < 1000000/60 )
+			{
+				usleep(20);
+			}
+			else
+			{
+				fps_limit.reset();
+				(*capture)();
+				frames_stack( target, timer.time() );
 
-			scene.draw();
-			scene.tick( timer.tick() );
-			scene.swap_buffers();
+				scene.draw();
+				scene.tick( timer.tick() );
+				scene.swap_buffers();
+			}
 		}
 	}
 	else
 	{
 		while ( window->process_events (&scene) )
 		{
-			scene.draw();
-			scene.tick( timer.tick() );
-			scene.swap_buffers();
+			if( fps_limit.time() < 1000000/60 )
+			{
+				usleep(20);
+			}
+			else
+			{
+				fps_limit.reset();
+	
+				scene.draw();
+				scene.tick( timer.tick() );
+				scene.swap_buffers();
+			}
 		}
 	}
 		
