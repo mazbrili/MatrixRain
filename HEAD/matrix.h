@@ -184,9 +184,7 @@ public:
 	
 	void draw();
 	void tick(unsigned long usec);
-		
-	virtual void set_video(const VideoBuffer* buffer, int widht, int height);	
-	
+
 	virtual void pre_draw();
 	virtual void post_draw();
 
@@ -223,12 +221,9 @@ protected:
 class MatrixVideo:public Matrix	// Matrix and Video effect
 {
 public:
-	MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture);
+	MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture, const VideoBuffer* buffer, int widht, int height);
 	~MatrixVideo();
 
-	
-	virtual void set_video(const VideoBuffer* buffer, int widht, int height);	
-	
 	virtual void pre_draw();
 	virtual void post_draw();
 	
@@ -240,7 +235,7 @@ protected:
 class MatrixVideoFX:public MatrixVideo	// Matrix Video with Vertex Shader FX
 {
 public:
-	MatrixVideoFX(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture);
+	MatrixVideoFX(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture, const VideoBuffer* buffer, int widht, int height);
 	~MatrixVideoFX();
 
 	virtual void pre_draw();

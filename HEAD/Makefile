@@ -11,13 +11,14 @@ DEFINES	:= -DSTANDALONE -DHAVE_GL -DUSE_GL -DGL_GLEXT_PROTOTYPES -DGETTIMEOFDAY_
 LIBS	:= -lX11 -lGL
 
 
-PROJ_FILES	:= *.cpp *.h Makefile devlog
+PROJ_FILES	:= *.cpp *.h Makefile devlog manpage.1
 PUBLIC_NAME	:= MatrixRain
 PACK_NAME	:= $(PROGRAM)-0.0.`date +%G%m%d`
 DESTDIR 	:=
 
 INSTALL_BIN_DIR	:= /usr/lib/xscreensaver
 INSTALL_DTP_DIR	:= /usr/share/applications/screensavers
+INSTALL_MAN_DIR	:= /usr/share/man/man1
 
 
 all: $(PROGRAM)
@@ -51,6 +52,7 @@ $(OBJ): %.o: %.cpp
 install: $(PROGRAM)
 	mkdir -p $(DESTDIR)/$(INSTALL_BIN_DIR)
 	install ./$(PROGRAM) $(DESTDIR)/$(INSTALL_BIN_DIR)/$(PROGRAM)
+	install ./manpage.1 $(DESTDIR)/$(INSTALL_MAN_DIR)/$(PROGRAM).1
 	mkdir -p $(DESTDIR)/$(INSTALL_DTP_DIR)
 	echo "\n"\
 	"[Desktop Entry]\n"\
@@ -69,5 +71,6 @@ install: $(PROGRAM)
 
 uninstall:
 	rm $(DESTDIR)/$(INSTALL_BIN_DIR)/$(PROGRAM)
+	rm $(DESTDIR)/$(INSTALL_MAN_DIR)/$(PROGRAM).1
 	rm $(DESTDIR)/$(INSTALL_DTP_DIR)/$(PROGRAM).desktop
 

@@ -42,7 +42,7 @@ void VideoBuffer::VideoFrame::update(char* data, unsigned int offset_x, unsigned
 	glTexSubImage2D(GL_TEXTURE_2D, 0, offset_x, offset_y, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
 }
 
-VideoBuffer::VideoBuffer(const Bitmap& frame, int layers, unsigned long micsec_delay):TextureArray(layers+1 /*for current*/), top_index(0), last_time(0), delay(micsec_delay)
+VideoBuffer::VideoBuffer(const Bitmap& frame, int layers, unsigned long micsec_delay):TextureArray(layers+1 /*for current*/), top_index(0), last_time(micsec_delay), delay(micsec_delay)
 {
 	s = float(frame.width())  / float(round_pow_2( frame.width()  ));
 	t = float(frame.height()) / float(round_pow_2( frame.height() ));
@@ -53,12 +53,12 @@ VideoBuffer::VideoBuffer(const Bitmap& frame, int layers, unsigned long micsec_d
 	}
 }
 
-void VideoBuffer::operator()(const Bitmap& frame, unsigned long time)
+void VideoBuffer::update(const Bitmap& frame, unsigned long usec)
 {
-	if(time - last_time >= delay)
+	if( (last_time -= usec) <= 0 )
 	{
 		top_index = (++top_index) % num_textures;
-		last_time = time;
+		last_time += delay;
 	}
 
 	VideoFrame* video = (VideoFrame*)textures[top_index];

@@ -15,10 +15,8 @@
 #include "gl_view.h"
 #include "app_window.h"
 #include "options.h"
-
-//extern FILE* log22;
 //--------------------------------------------------------------
-AppWindow::AppWindow()
+AppWindow::AppWindow():display(NULL), window(0), own_window(false)
 {
 	XSetErrorHandler(AppWindow::x_error_handler);
 
@@ -100,7 +98,9 @@ AppWindow::AppWindow()
 
 		XMapWindow(display, window);
 		XMoveWindow(display, window, x, y);
-		
+
+		own_window = true;
+
 		XWindowAttributes xgwa;
 		XGetWindowAttributes (display, window, &xgwa);
 		XSelectInput (display, window, (xgwa.your_event_mask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask));
@@ -114,8 +114,11 @@ AppWindow::AppWindow()
 
 AppWindow::~AppWindow()
 {
-	XUnmapWindow(display, window);
-	XDestroyWindow(display, window);
+	if( own_window )
+	{
+		XUnmapWindow(display, window);
+		XDestroyWindow(display, window);
+	}
   	XSync(display, False);
 	XCloseDisplay(display);
 }
@@ -212,23 +215,18 @@ Window AppWindow::root_window(Screen *screen)
 		const char *xss_id = getenv("XSCREENSAVER_WINDOW");
 		if (xss_id && *xss_id)
 		{
-//			fprintf(log22,"%s %d xss_id %s ", __FILE__, __LINE__, xss_id);
-	
 			unsigned long id = 0;
 			char c;
 			if (1 == sscanf (xss_id, " 0x%lx %c", &id, &c) || 1 == sscanf (xss_id, " %lu %c",   &id, &c))
 			{
 				root = (Window) id;
 				save_screen = screen;
-//				fprintf(log22,"%s %d root %i save_screen %i ", __FILE__, __LINE__, root, save_screen);
 	
 				return root;
 			}
 		}
 
 		root = RootWindowOfScreen(screen);
-
-//		fprintf(log22,"%s %d root %i ", __FILE__, __LINE__, root);
 	
 		/* go look for a virtual root */
 		Atom __SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
@@ -244,14 +242,10 @@ Window AppWindow::root_window(Screen *screen)
 				unsigned long nitems, bytesafter;
 				unsigned char *newRoot = 0;
 
-
 				if (XGetWindowProperty(dpy, children[i],__SWM_VROOT, 0, 1, False, XA_WINDOW,
 					&actual_type, &actual_format, &nitems, &bytesafter, &newRoot) == Success && newRoot)
 				{
-//					fprintf(stderr,"SET ROOT WINDOW! %p\n", newRoot);
 					root = *((Window *) newRoot);
-//					fprintf(log22,"%s %d root %i", __FILE__, __LINE__, root);
-	
 					break;
 				}
 			}

@@ -6,13 +6,17 @@
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
+#include <csignal>
+
 #include "application.h"
 #include "app_window.h"
 #include "options.h"
 #include "bitmap.h"
 #include "scene.h"
 //--------------------------------------------------------------
-Application::Application():window(NULL),capture(NULL)
+Application* Application::sig_handler = NULL;
+
+Application::Application():window(NULL),capture(NULL),running(true)
 {
 	window = new AppWindow();
 	window->clear_background(0x00000000); // black
@@ -25,6 +29,16 @@ Application::Application():window(NULL),capture(NULL)
 	{
 		fprintf(stderr, "capture_error: %s\n", error.what() );
 	}
+
+	Application::sig_handler = this;
+
+
+	struct sigaction action;
+	action.sa_handler = &handler;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+
+	sigaction(SIGTERM, &action, NULL);
 }
 
 Application::~Application()
@@ -38,53 +52,25 @@ int Application::run()
 	Timer timer;
 	Timer fps_limit;
 
-	Scene scene(window, capture != NULL);
+	Scene scene(window, capture);
 
-	if(capture != NULL)
+	while ( running && window->process_events (&scene) )
 	{
-		Bitmap target;
-		target << *capture;
-		VideoBuffer frames_stack(target, 0, 10000);
-
-		scene.matrix->set_video(&frames_stack, capture->width(), capture->height());
-
-		while ( window->process_events (&scene) )
+		if( fps_limit.time() < 1000000/60 )
 		{
-			if( fps_limit.time() < 1000000/60 )
-			{
-				usleep(20);
-			}
-			else
-			{
-				fps_limit.reset();
-				(*capture)();
-				frames_stack( target, timer.time() );
+			usleep(20);
+			continue;
+		}
 
-				scene.draw();
-				scene.tick( timer.tick() );
-				scene.swap_buffers();
-			}
-		}
+		fps_limit.reset();
+
+		if(capture) capture->capture();
+
+		scene.draw();
+		scene.tick( timer.tick() );
+		scene.swap_buffers();
 	}
-	else
-	{
-		while ( window->process_events (&scene) )
-		{
-			if( fps_limit.time() < 1000000/60 )
-			{
-				usleep(20);
-			}
-			else
-			{
-				fps_limit.reset();
-	
-				scene.draw();
-				scene.tick( timer.tick() );
-				scene.swap_buffers();
-			}
-		}
-	}
-		
+
 	return 0;
 }
 //--------------------------------------------------------------

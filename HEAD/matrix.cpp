@@ -19,7 +19,7 @@ Matrix::Matrix(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture)
 	colors(NULL),
 	firsts(NULL), counts(NULL),
 	nstrips(ns), nglyphs(ng),
-	strips(NULL), grid_random(324467), animation_period(30000000 + grandom(15000000U))
+	strips(NULL), grid_random(324467), animation_period(180000000 + grandom(90000000U))
 {
 	unsigned int strip_pack = nglyphs * 4;
 
@@ -147,10 +147,6 @@ void Matrix::spawn_d()
 			strips[i]->adelay = grandom(2500000U);
 		}
 	}
-}
-
-void Matrix::set_video(const VideoBuffer* buffer, int widht, int height)
-{
 }
 
 void Matrix::pre_draw()
@@ -330,18 +326,11 @@ void Matrix::Strip::wave_tick(unsigned long usec)
 	}
 }
 
-MatrixVideo::MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture):Matrix(ns, ng, texture), video_st(NULL), video(NULL)
+MatrixVideo::MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture, const VideoBuffer* buffer, int widht, int height)
+	:Matrix(ns, ng, texture), video_st(NULL), video(NULL)
 {
 	video_st = new GLView::T2F[ns * ng * 4];	// Vertex array for video texture unit
-}
 
-MatrixVideo::~MatrixVideo()
-{
-	delete[] video_st;
-}
-
-void MatrixVideo::set_video(const VideoBuffer* buffer, int widht, int height)
-{
 	video = buffer;
 
 	float video_res[4];
@@ -356,6 +345,11 @@ void MatrixVideo::set_video(const VideoBuffer* buffer, int widht, int height)
 		video_st[i].s = (video_res[0] - vertexies[i].x)/video_res[2];
 		video_st[i].t = -vertexies[i].y/video_res[3];
 	}
+}
+
+MatrixVideo::~MatrixVideo()
+{
+	delete[] video_st;
 }
 	
 void MatrixVideo::pre_draw()
@@ -377,7 +371,8 @@ void MatrixVideo::post_draw()
 	Matrix::post_draw();
 }
 
-MatrixVideoFX::MatrixVideoFX(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture):MatrixVideo(ns, ng, texture), program(NULL)
+MatrixVideoFX::MatrixVideoFX(unsigned int ns, unsigned int ng, TextureAtlas::Texture* texture, const VideoBuffer* buffer, int widht, int height)
+:MatrixVideo(ns, ng, texture, buffer, widht, height), program(NULL)
 {
 	Shader vshader(Shader::Vertex);
 

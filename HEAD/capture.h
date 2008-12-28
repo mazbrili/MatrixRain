@@ -87,7 +87,7 @@ public:
 	Capture(unsigned int covet_w, unsigned int covet_h, const char* dev_name);
 	~Capture();
 
-	const char* operator()();
+	const char* capture();
 	unsigned int width()const { return captured_width;  }
 	unsigned int height()const{ return captured_height; }
 

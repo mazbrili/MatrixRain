@@ -25,8 +25,8 @@ public:
 
 	VideoBuffer(const Bitmap& frame, int sub_layers, unsigned long micsec_delay);
 
-	void operator()(const Bitmap& frame, unsigned long time);
-	virtual void bind(GLint texture_function)const;
+	void update(const Bitmap& frame, unsigned long usec);
+	void bind(GLint texture_function)const;
 
 	float s;
 	float t;

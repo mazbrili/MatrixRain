@@ -20,6 +20,8 @@ public:
 	bool process_events(class GLView* view);
 	void clear_background(unsigned int long color);
 
+	Display* display;
+	Window window;
 private:
 	static int x_error_handler(Display *dpy, XErrorEvent *error);
 	static Bool map_notify_event (Display *dpy, XEvent *event, XPointer window);
@@ -27,9 +29,7 @@ private:
 
 	Atom XA_WM_PROTOCOLS;
 	Atom XA_WM_DELETE_WINDOW;
-public:
-	Display* display;
-	Window window;
+	bool own_window;
 };
 //--------------------------------------------------------------
 #endif//APP_WINDOW

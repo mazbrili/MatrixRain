@@ -1,3 +1,6 @@
+Sun, 28 Dec 2008 02:52:19 +0200
+	HAPPY NEW YEAR 2009 !
+	Fix bug in receiving SIGTERM signal. Animation perion has been expanded. Add a man page.
 Mon, 24 Nov 2008 14:30:25 +0200
 	Performance refactoring. Finish twister-effect implamentation. Update of glyphs` images.
 Tue, 14 Oct 2008 10:54:08 +0300

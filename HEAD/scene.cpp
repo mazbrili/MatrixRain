@@ -44,17 +44,20 @@ void VideoScreen::tick(unsigned long usec)
 float Scene::user_a = 0.0f;
 float Scene::user_b = 0.0f;
 
-Scene::Scene(class AppWindow* win, bool capturing_enable):GLView(win), atlas(1), screen(NULL), matrix(NULL)
+Scene::Scene(class AppWindow* win, Capture* capture):GLView(win), atlas(1), frames_stack(NULL), matrix(NULL)
 {
-	if(capturing_enable)
+	if(capture != NULL/*capturing_enable*/)
 	{
+		target << *capture;
+		frames_stack = new VideoBuffer(target, 0, 10000);
+
 		if( Options::get("--no-shaders") || version() <= "2.0")
 		{
-			matrix = new MatrixVideo(128, 112, atlas[0]);
+			matrix = new MatrixVideo(128, 112, atlas[0], frames_stack, target.width(), target.height());
 		}
 		else
 		{
-			matrix = new MatrixVideoFX(128, 112, atlas[0]);
+			matrix = new MatrixVideoFX(128, 112, atlas[0], frames_stack, target.width(), target.height());
 		}
 	}
 	else matrix = new Matrix(128, 112, atlas[0]);
@@ -62,6 +65,7 @@ Scene::Scene(class AppWindow* win, bool capturing_enable):GLView(win), atlas(1),
 
 Scene::~Scene()
 {
+	delete frames_stack;
 	delete matrix;
 }
 
@@ -71,7 +75,6 @@ unsigned int Scene::draw()
 	glLoadIdentity();
 	glTranslatef(-32.0,24.0,-25.0f);
 
-//	glRotatef(user_a, 0.0f, 1.0f, 0.0f);
 	matrix->draw();
 	return 0;
 }
@@ -79,6 +82,12 @@ unsigned int Scene::draw()
 unsigned int Scene::tick(unsigned long usec)
 {	
 	Waiter::tick();
+
+	if(frames_stack)
+	{
+		frames_stack->update(target, usec);
+	}
+
 	matrix->tick(usec);
 	return 0;
 }

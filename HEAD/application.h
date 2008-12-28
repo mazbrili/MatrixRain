@@ -20,8 +20,17 @@ public:
 
 private:
 
+	void signal(int sig){ running = false; }
+	static void handler(int sig)
+	{
+		if(sig_handler) sig_handler->signal(sig);
+	}
+
+	static Application* sig_handler;
+
 	class AppWindow* window;
 	class Capture*	capture;
+	bool running;
 };
 //--------------------------------------------------------------
 #endif//APPLICATION_H

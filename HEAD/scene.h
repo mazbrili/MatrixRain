@@ -37,7 +37,7 @@ private:
 class Scene:public GLView
 {
 public:
-	Scene(class AppWindow* win, bool capturing_enable);
+	Scene(class AppWindow* win, Capture* capture);
 	~Scene();
 	
 	unsigned int draw();
@@ -45,7 +45,9 @@ public:
 	bool event_handler(Display* dpy, Window window, XEvent& event);
 
 	TextureAtlas atlas;
-	VideoScreen* screen;	// Real Time Video
+	Bitmap target;
+
+	VideoBuffer* frames_stack;
 	Matrix* matrix;
 
 	static float user_a;

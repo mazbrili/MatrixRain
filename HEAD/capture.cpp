@@ -12,6 +12,9 @@
 #include <cassert>
 #include <cstring>
 
+#include <ctime>
+
+
 #include <unistd.h>
 #include <memory.h>
 #include <fcntl.h>              // low-level i/o
@@ -241,7 +244,7 @@ Capture::~Capture()
 	delete[] buffers;
 }
 
-const char* Capture::operator()()
+const char* Capture::capture()
 {
 	fd_set fds;
 

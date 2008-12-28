@@ -6,7 +6,6 @@
 //--------------------------------------------------------------
 
 //--------------------------------------------------------------
-#include <cctype>
 #include "options.h"
 #include "stuff.h"
 #include "application.h"
@@ -15,7 +14,7 @@ Options::Option default_opts[]={
 	{ "--help",	"false",	"show this message"				},
 	{ "--root",  	"false",	"setup a root window for fullscreen mode"	},
 	{ "--window-id","0",		"specific X window ID"				},
-	{ "--width",	"600",		"setup a width of screensaver window"		},
+	{ "--width",	"640",		"setup a width of screensaver window"		},
   	{ "--height",	"480",		"setup a height of screensaver window"		},
 	{ "--no-shaders","false",	"force disable shaders"				},
 	{ "--device",	"/dev/video0",	"setup a device for capturing video"		},
@@ -39,6 +38,7 @@ int main(int argc, char **argv)
 	Application application;
 
 	return application.run();
+
 }
 //--------------------------------------------------------------
 
