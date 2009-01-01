@@ -79,6 +79,8 @@ unsigned int Scene::draw()
 	return 0;
 }
 
+//int count = 50;
+
 unsigned int Scene::tick(unsigned long usec)
 {	
 	Waiter::tick();
@@ -86,6 +88,12 @@ unsigned int Scene::tick(unsigned long usec)
 	if(frames_stack)
 	{
 		frames_stack->update(target, usec);
+/*		if(count > 0) count--;
+		if(count == 0)
+		{
+			count = -1;
+			target.dump("/home/sqrt/1.bmp");
+		}*/
 	}
 
 	matrix->tick(usec);

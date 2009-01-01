@@ -298,7 +298,7 @@ const char* Capture::capture()
 	if( buffer )
 	{
 		MMapBuffer* current = buffers[buf.index];		
-		decoders[format]((char*)current->start, (char*)current->start + current->length, buffer);
+		decoders[oformat]((char*)current->start, (char*)current->start + current->length, buffer);
 	}
 	return buffer;
 }
@@ -411,65 +411,89 @@ void Capture::GREYtoGREY(const char* src, const char* end, char* dst)
 	memcpy(dst, src, end - src);
 }
 
-void Capture::YUYVtoRGB(const char* src, const char* end, char* dst)
-{
+#define CLAMP(c) if(c & (~255)) { c = (unsigned char)~(c >> (sizeof(c)*8 -1 )); }
+//#define CLAMP(c) { int sign = c >> (sizeof(c)*8 -1); int d = c & ~sign;  c = (unsigned char)( d | (((d & (~255)) != 0) * 0xFF )); }
+
+void Capture::YUYVtoRGB(const char* c, const char* e, char* dst)
+{	
+	unsigned const char* src = (unsigned const char*)c;
+	unsigned const char* end = (unsigned const char*)e;
 	
-/*	rgb[0] = float(y) +1.403f*float(v);
-	rgb[1] = float(y) -0.344f*float(u) -0.714f*float(v);
-	rgb[2] = float(y) + 1.770f*float(u);
-*/
-/*	rgb[0] = 1.164f * float(float(y)-16) + 2.018f*float(float(u)-128);
-	rgb[1] = 1.164f * float(float(y)-16) - 0.813f*float(float(v) - 128) - 0.391f*float(float(u) - 128);
-	rgb[2] = 1.164f * float(float(y)-16) + 1.596f*float(float(v) - 128);
-*/
+	int r, g, b, cr, cg, cb, y1, y2;
 	for(; src<end; src+=4) 
 	{
-		char y1 = src[0];
-		char u  = src[1];
-		char y2 = src[2];
-		char v  = src[3];
+		y1 = src[0];
+		cb = ((src[1] -128)*454) >> 8;
+		cg = ((src[1] -128)*88);
 
-		float r = + 2.032f*float(u);
-		float g = - 0.395f*float(u) -0.581f*float(v);
-		float b = + 1.140f*float(v);
-
-		dst[0] = float(y1) + r;			
-		dst[1] = float(y1) + g;
-		dst[2] = float(y1) + b;
-
+		y2 = src[2];
+		cr = ((src[3] - 128) * 359) >> 8;
+		cg = (cg + (src[3] - 128) * 183) >> 8;
+	
+		r = y1 + cr;
+		b = y1 + cb;
+		g = y1 - cg;
+		CLAMP(r);
+		CLAMP(g);
+		CLAMP(b);
+		
+		dst[0] = r;
+		dst[1] = g;
+		dst[2] = b;
 		dst +=3;
 
-		dst[0] = y2;			
-		dst[1] = y2;
-		dst[2] = y2;
+		r = y2 + cr;
+		b = y2 + cb;
+		g = y2 - cg;
+		CLAMP(r);
+		CLAMP(g);
+		CLAMP(b);
 
+		dst[0] = r;
+		dst[1] = g;
+		dst[2] = b;
 		dst +=3;
 	}
 }
 
-void Capture::YUYVtoBGR(const char* src, const char* end, char* dst)
+void Capture::YUYVtoBGR(const char* c, const char* e, char* dst)
 {
+	unsigned const char* src = (unsigned const char*)c;
+	unsigned const char* end = (unsigned const char*)e;
+	
+	int r, g, b, cr, cg, cb, y1, y2;
 	for(; src<end; src+=4) 
 	{
-		char y1 = src[0];
-		char u  = src[1];
-		char y2 = src[2];
-		char v  = src[3];
+		y1 = src[0];
+		cb = ((src[1] -128)*454) >> 8;
+		cg = ((src[1] -128)*88);
 
-		float r = + 2.032f*float(u);
-		float g = - 0.395f*float(u) -0.581f*float(v);
-		float b = + 1.140f*float(v);
-
-		dst[0] = float(y1) + b;			
-		dst[1] = float(y1) + g;
-		dst[2] = float(y1) + r;
-
+		y2 = src[2];
+		cr = ((src[3] - 128) * 359) >> 8;
+		cg = (cg + (src[3] - 128) * 183) >> 8;
+	
+		r = y1 + cr;
+		b = y1 + cb;
+		g = y1 - cg;
+		CLAMP(r);
+		CLAMP(g);
+		CLAMP(b);
+		
+		dst[0] = b;
+		dst[1] = g;
+		dst[2] = r;
 		dst +=3;
 
-		dst[0] = float(y2) + b;			
-		dst[1] = float(y2) + g;
-		dst[2] = float(y2) + r;
+		r = y2 + cr;
+		b = y2 + cb;
+		g = y2 - cg;
+		CLAMP(r);
+		CLAMP(g);
+		CLAMP(b);
 
+		dst[0] = b;
+		dst[1] = g;
+		dst[2] = r;
 		dst +=3;
 	}
 }

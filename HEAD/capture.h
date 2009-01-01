@@ -68,6 +68,21 @@ private:
 public:
 	enum out_format{ RGB, BGR, GRAY, num };
 
+	static unsigned int bpp(out_format format) // bytes per pixel
+	{
+		switch(format)
+		{
+		case RGB:
+		case BGR:
+			return 3;
+		case GRAY:
+			return 1;
+		default:
+			return -1;
+		}
+		return -1;
+	}
+
 	class runtime_error:public std::exception
 	{
 	public:
@@ -93,7 +108,7 @@ public:
 
 	inline void set_buffer(char* buf, out_format fmt)
 	{
-		format = fmt;
+		oformat = fmt;
 		buffer = buf;
 	}
 
@@ -111,7 +126,7 @@ private:
 	
 	const static Converter supported_formats[4];
 
-	out_format format;
+	out_format oformat;
 	unsigned int captured_width;
 	unsigned int captured_height;
 

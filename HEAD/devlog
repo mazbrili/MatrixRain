@@ -1,3 +1,5 @@
+Thu, 01 Jan 2009 20:27:12 +0200
+	Fix bug in converting raw video frames YUYV -> RGB(BGR).
 Sun, 28 Dec 2008 02:52:19 +0200
 	HAPPY NEW YEAR 2009 !
 	Fix bug in receiving SIGTERM signal. Animation perion has been expanded. Add a man page.

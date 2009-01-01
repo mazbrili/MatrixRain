@@ -31,9 +31,11 @@ public:
 		image_width = capture.width();
 		image_height = capture.height();
 
-		buffer = new char [image_width*image_height];	// [gray] bit per pixel == 1
+		Capture::out_format format = Capture::GRAY;
 
-		capture.set_buffer(buffer, Capture::GRAY);
+		size_t size = image_width*image_height*Capture::bpp(format);
+		buffer = new char [size];
+		capture.set_buffer(buffer, format);
 
 		return *this;
 	}
@@ -103,9 +105,10 @@ public:
 		{
 			for(unsigned int j=0; j<image_width; j++)
 			{
-				char bmp_pixel[3]={*pixel,*pixel,*pixel};
+				char bmp_pixel[3]={pixel[0],pixel[1],pixel[2]};
 				res = fwrite(bmp_pixel, sizeof(bmp_pixel), 1, mfd);
-				pixel++;
+			//	pixel++;
+				pixel+=3;
 			}
 			char dummy[dob_width];
 			res = fwrite(dummy, sizeof(dummy), 1, mfd);

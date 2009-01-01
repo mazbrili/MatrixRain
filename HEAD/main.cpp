@@ -26,7 +26,6 @@ int main(int argc, char **argv)
 {
 	Options::load(argc, argv, default_opts);
 
-
 	if( Options::get("--help") ) return Options::usage();
 
 	// A little converter bmp -> *.h	
@@ -38,7 +37,6 @@ int main(int argc, char **argv)
 	Application application;
 
 	return application.run();
-
 }
 //--------------------------------------------------------------
 
