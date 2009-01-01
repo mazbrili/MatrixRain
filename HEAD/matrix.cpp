@@ -342,7 +342,7 @@ MatrixVideo::MatrixVideo(unsigned int ns, unsigned int ng, TextureAtlas::Texture
 	const unsigned int n = nstrips * nglyphs * 4;
 	for(unsigned int i=0; i<n; i++)
 	{
-		video_st[i].s = (video_res[0] - vertexies[i].x - 1)/video_res[2];
+		video_st[i].s = (video_res[0] - vertexies[i].x)/(video_res[2]+0.5f);
 		video_st[i].t = -vertexies[i].y/video_res[3];
 	}
 }
