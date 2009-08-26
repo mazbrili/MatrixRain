@@ -1,5 +1,5 @@
 This package (mrain) was created by Pavel Karneliuk 
-<pavel_karneliuk@users.sourceforge.net> on Sun, 28 Dec 2008 00:38:43 +0300.
+<pavel_karneliuk@users.sourceforge.net> on Wed, 26 Aug 2009 19:35:10 +0300.
 
 Upstream Author: 
 
@@ -7,11 +7,11 @@ Upstream Author:
 
 Copyright: 
 
-    Copyright (C) 2008 Pavel Karneliuk
+    Copyright (C) 2008, 2009 Pavel Karneliuk
 
 License:
 
     You are free to distribute this software under the terms of
-    the BSD License.
-    On Debian systems, the complete text of the BSD License
-    can be found in /usr/share/common-licenses/BSD file.
+    the GNU GPL version 2 License.
+    On Debian systems, the complete text of the GNU GPL version 2 License
+    can be found in /usr/share/common-licenses/GPL-2 file.

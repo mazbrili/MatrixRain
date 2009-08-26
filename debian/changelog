@@ -1,5 +1,6 @@
-mrain (0.0.20081228-1) unstable; urgency=low
+mrain (0.0.20090826-1) unstable; urgency=low
 
+  * Major refactoring. Add new options --vflip and --hflip
   * Fix bug at program exit. Add man page
   * Performance update. Add new effect 'Twister'. Minor fixes
   * Performance update. Add support OpenGL 1.5 hardware acceleratiion. Add new option --no-shaders 
@@ -8,4 +9,4 @@ mrain (0.0.20081228-1) unstable; urgency=low
   * Initial release
   * Fix bugs in build-scripts. Closes: #1.
 
- -- Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>  Sun, 28 Dec 2008 13:05:10 +0300
+ -- Pavel Karneliuk <pavel_karneliuk@users.sourceforge.net>  Wed, 26 Aug 2009 19:35:10 +0300
